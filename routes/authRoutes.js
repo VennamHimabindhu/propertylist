@@ -4,14 +4,15 @@ const router = express.Router();
 router.post('/login', (req, res) => {
   const { email, password } = req.body;
 
-  if (email === 'test@example.com' && password === '123456') {
+  // ✅ Accept any email and password
+  if (email && password) {
     return res.json({
       message: 'Login successful',
-      token: 'dummy-jwt-token',
+      token: 'dummy-jwt-token', // token can stay the same for testing
     });
   }
 
-  return res.status(401).json({ error: 'Invalid credentials' });
+  return res.status(400).json({ error: 'Email and password required' });
 });
 
 module.exports = router;
