@@ -1,18 +1,19 @@
-const express = require('express');
-const router = express.Router();
+const jwt = require('jsonwebtoken');
 
 router.post('/login', (req, res) => {
   const { email, password } = req.body;
 
-  // ✅ Accept any email and password
-  if (email && password) {
-    return res.json({
-      message: 'Login successful',
-      token: 'dummy-jwt-token', // token can stay the same for testing
-    });
+  if (!email || !password) {
+    return res.status(400).json({ error: 'Email and password required' });
   }
 
-  return res.status(400).json({ error: 'Email and password required' });
-});
+  // create a token
+  const token = jwt.sign({ id: 'testuserId' }, process.env.JWT_SECRET, {
+    expiresIn: '1h',
+  });
 
-module.exports = router;
+  return res.json({
+    message: 'Login successful',
+    token,
+  });
+});
