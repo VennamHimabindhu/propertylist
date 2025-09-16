@@ -12,7 +12,11 @@ app.use(cors());
 app.use(helmet()); // ✅ Use helmet before other middlewares
 app.use(express.json());
 
-app.use('/api/properties', require('./routes/propertyRoutes')); // ✅ Route
+// ✅ Existing property routes
+app.use('/api/properties', require('./routes/propertyRoutes')); 
+
+// ✅ Add auth/login route
+app.use('/api/users', require('./routes/authRoutes')); 
 
 const PORT = process.env.PORT || 5000;
 
