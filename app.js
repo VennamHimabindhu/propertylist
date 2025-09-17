@@ -1,6 +1,5 @@
 const express = require('express');
 const dotenv = require('dotenv');
-const cors = require('cors');
 const helmet = require('helmet');
 const connectDB = require('./config/db');
 
@@ -9,20 +8,26 @@ connectDB();
 
 const app = express();
 
-// ✅ Apply CORS first with explicit config
-app.use(cors({
-  origin: "*", // allow any frontend
-  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-  allowedHeaders: ["Origin", "X-Requested-With", "Content-Type", "Accept", "Authorization"]
-}));
+// ✅ Dynamic CORS middleware to allow any frontend
+app.use((req, res, next) => {
+  const origin = req.headers.origin || "*";
+  res.header("Access-Control-Allow-Origin", origin);
+  res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
+  res.header("Access-Control-Allow-Headers", "Content-Type, Authorization");
+  res.header("Access-Control-Allow-Credentials", "true");
 
-// ✅ Handle preflight requests (important for Render)
-app.options('*', cors());
+  // Handle preflight OPTIONS request
+  if (req.method === "OPTIONS") {
+    return res.sendStatus(200);
+  }
+
+  next();
+});
 
 // ✅ Parse JSON
 app.use(express.json());
 
-// ✅ Helmet AFTER cors()
+// ✅ Helmet AFTER CORS
 app.use(helmet({
   crossOriginResourcePolicy: false,
 }));
