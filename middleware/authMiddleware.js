@@ -16,7 +16,7 @@ const protect = (req, res, next) => {
   console.log('📦 Extracted Token:', token);
 
   try {
-    console.log('🔑 JWT_SECRET:', process.env.JWT_SECRET);
+    console.log('🔑 JWT_SECRET:', process.env.JWT_SECRET); // Check if .env loaded
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
     console.log('✅ Decoded Token:', decoded);
 
