@@ -15,8 +15,10 @@ app.use(cors());
 // ✅ Parse JSON before routes
 app.use(express.json());
 
-// ✅ Helmet AFTER cors()
-app.use(helmet());
+// ✅ Helmet AFTER cors(), with safe config
+app.use(helmet({
+  crossOriginResourcePolicy: false,
+}));
 
 // Routes
 app.use('/api/properties', require('./routes/propertyRoutes'));
