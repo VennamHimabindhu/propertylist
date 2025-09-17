@@ -8,7 +8,7 @@ connectDB();
 
 const app = express();
 
-// ✅ Dynamic CORS middleware to allow any frontend
+// ✅ DYNAMIC CORS – allow any frontend
 app.use((req, res, next) => {
   const origin = req.headers.origin || "*";
   res.header("Access-Control-Allow-Origin", origin);
@@ -16,10 +16,8 @@ app.use((req, res, next) => {
   res.header("Access-Control-Allow-Headers", "Content-Type, Authorization");
   res.header("Access-Control-Allow-Credentials", "true");
 
-  // Handle preflight OPTIONS request
-  if (req.method === "OPTIONS") {
-    return res.sendStatus(200);
-  }
+  // ✅ Preflight requests handled immediately
+  if (req.method === "OPTIONS") return res.sendStatus(200);
 
   next();
 });
@@ -36,6 +34,7 @@ app.use(helmet({
 app.use('/api/properties', require('./routes/propertyRoutes'));
 app.use('/api/users', require('./routes/authRoutes'));
 
+// ✅ Server port
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
   console.log(`✅ Server running on port ${PORT}`);
