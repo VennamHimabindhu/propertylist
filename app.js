@@ -9,17 +9,14 @@ connectDB();
 
 const app = express();
 
-// ✅ Configure CORS properly
-app.use(cors({
-  origin: ["http://localhost:3000", "https://your-frontend-domain.com"], 
-  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-  allowedHeaders: ["Content-Type", "Authorization"],
-  credentials: true
-}));
+// ✅ Allow ALL origins (any frontend can call your API)
+app.use(cors());
 
-// ✅ Helmet AFTER CORS
-app.use(helmet());
+// ✅ Parse JSON before routes
 app.use(express.json());
+
+// ✅ Helmet AFTER cors()
+app.use(helmet());
 
 // Routes
 app.use('/api/properties', require('./routes/propertyRoutes'));
