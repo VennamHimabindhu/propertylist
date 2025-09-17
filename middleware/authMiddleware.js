@@ -1,6 +1,9 @@
 const jwt = require('jsonwebtoken');
 
 const protect = (req, res, next) => {
+  // ✅ Skip preflight OPTIONS requests
+  if (req.method === "OPTIONS") return next();
+
   const authHeader = req.headers.authorization;
   console.log('🔐 AUTH HEADER:', authHeader);
 
@@ -13,7 +16,7 @@ const protect = (req, res, next) => {
   console.log('📦 Extracted Token:', token);
 
   try {
-    console.log('🔑 JWT_SECRET:', process.env.JWT_SECRET); // Check if .env loaded
+    console.log('🔑 JWT_SECRET:', process.env.JWT_SECRET);
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
     console.log('✅ Decoded Token:', decoded);
 
