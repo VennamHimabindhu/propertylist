@@ -8,6 +8,13 @@ dotenv.config();
 connectDB();
 
 const app = express();
+app.use((req, res, next) => {
+  res.header("Access-Control-Allow-Origin", "*"); // ✅ Allow any frontend
+  res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
+  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization");
+  next();
+});
+
 
 // ✅ Allow ALL origins (any frontend can call your API)
 app.use(cors());
