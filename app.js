@@ -8,21 +8,21 @@ dotenv.config();
 connectDB();
 
 const app = express();
-app.use((req, res, next) => {
-  res.header("Access-Control-Allow-Origin", "*"); // ✅ Allow any frontend
-  res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
-  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization");
-  next();
-});
 
+// ✅ Apply CORS first with explicit config
+app.use(cors({
+  origin: "*", // allow any frontend
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+  allowedHeaders: ["Origin", "X-Requested-With", "Content-Type", "Accept", "Authorization"]
+}));
 
-// ✅ Allow ALL origins (any frontend can call your API)
-app.use(cors());
+// ✅ Handle preflight requests (important for Render)
+app.options('*', cors());
 
-// ✅ Parse JSON before routes
+// ✅ Parse JSON
 app.use(express.json());
 
-// ✅ Helmet AFTER cors(), with safe config
+// ✅ Helmet AFTER cors()
 app.use(helmet({
   crossOriginResourcePolicy: false,
 }));
