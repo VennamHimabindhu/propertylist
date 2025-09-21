@@ -1,6 +1,7 @@
 const express = require('express');
 const dotenv = require('dotenv');
 const helmet = require('helmet');
+const cors = require('cors');
 const connectDB = require('./config/db');
 
 dotenv.config();
@@ -8,19 +9,26 @@ connectDB();
 
 const app = express();
 
-// ✅ DYNAMIC CORS – allow any frontend
-app.use((req, res, next) => {
-  const origin = req.headers.origin || "*";
-  res.header("Access-Control-Allow-Origin", origin);
-  res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
-  res.header("Access-Control-Allow-Headers", "Content-Type, Authorization");
-  res.header("Access-Control-Allow-Credentials", "true");
+// ✅ CORS for multiple frontends
+const allowedOrigins = [
+  "http://localhost:3000",           // local dev
+  "https://myfrontend.com"           // your deployed frontend
+];
 
-  // ✅ Preflight requests handled immediately
-  if (req.method === "OPTIONS") return res.sendStatus(200);
-
-  next();
-});
+app.use(cors({
+  origin: function(origin, callback) {
+    // allow requests with no origin (like Postman)
+    if (!origin) return callback(null, true);
+    if (allowedOrigins.indexOf(origin) === -1) {
+      const msg = "The CORS policy for this site does not allow access from the specified Origin.";
+      return callback(new Error(msg), false);
+    }
+    return callback(null, true);
+  },
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization"],
+  credentials: true
+}));
 
 // ✅ Parse JSON
 app.use(express.json());
@@ -34,7 +42,10 @@ app.use(helmet({
 app.use('/api/properties', require('./routes/propertyRoutes'));
 app.use('/api/users', require('./routes/authRoutes'));
 
-// ✅ Server port
+// Health check route
+app.get("/", (req, res) => res.send("Backend running"));
+
+// Server
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
