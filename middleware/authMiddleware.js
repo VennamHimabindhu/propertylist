@@ -1,31 +1,24 @@
-// authMiddleware.js
-require('dotenv').config(); // ✅ force load .env first
+// middleware/authMiddleware.js
 const jwt = require('jsonwebtoken');
 
 const protect = (req, res, next) => {
-  // ✅ Skip preflight OPTIONS requests
-  if (req.method === "OPTIONS") return next();
+  let token;
 
-  const authHeader = req.headers.authorization;
-  console.log('🔐 AUTH HEADER:', authHeader);
-
-  if (!authHeader || !authHeader.startsWith('Bearer ')) {
-    console.log('🚫 No Bearer token found');
-    return res.status(401).json({ message: 'No token, authorization denied' });
+  if (req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
+    // ✅ remove 'Bearer ' from the start
+    token = req.headers.authorization.split(' ')[1];
   }
 
-  const token = authHeader.split(' ')[1];
-  console.log('📦 Extracted Token:', token);
-  console.log('🔑 JWT_SECRET in middleware:', process.env.JWT_SECRET);
+  if (!token) {
+    return res.status(401).json({ message: 'Not authorized, no token' });
+  }
 
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    console.log('✅ Decoded Token:', decoded);
-
-    req.user = decoded.id;
+    req.user = decoded;
     next();
-  } catch (error) {
-    console.error('❌ JWT Verification Error:', error.message);
+  } catch (err) {
+    console.error('❌ JWT Verification Error:', err.message);
     res.status(401).json({ message: 'Invalid token' });
   }
 };
