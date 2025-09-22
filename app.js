@@ -5,6 +5,7 @@ const cors = require('cors');
 const connectDB = require('./config/db');
 
 dotenv.config();
+console.log("JWT_SECRET loaded from .env:", process.env.JWT_SECRET);
 connectDB();
 
 const app = express();
