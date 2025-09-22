@@ -1,3 +1,5 @@
+// authMiddleware.js
+require('dotenv').config(); // ✅ force load .env first
 const jwt = require('jsonwebtoken');
 
 const protect = (req, res, next) => {
@@ -14,9 +16,9 @@ const protect = (req, res, next) => {
 
   const token = authHeader.split(' ')[1];
   console.log('📦 Extracted Token:', token);
+  console.log('🔑 JWT_SECRET in middleware:', process.env.JWT_SECRET);
 
   try {
-    console.log('🔑 JWT_SECRET:', process.env.JWT_SECRET); // Check if .env loaded
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
     console.log('✅ Decoded Token:', decoded);
 
