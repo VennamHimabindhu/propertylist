@@ -5,11 +5,11 @@ const {
   getProperties,
   getPropertyById,
 } = require('../controllers/propertyController');
-// const { protect } = require('../middleware/authMiddleware');
 
+// Remove the protect middleware completely
 router.route('/')
   .get(getProperties)
-  .post(createProperty); // 🔓 now public (no token)
+  .post(createProperty); // 🔓 public now
 
 router.route('/:id').get(getPropertyById);
 
